@@ -1,4 +1,6 @@
 package com.example.demo.services;
 
-public interface IMaintenanceService {
+import com.example.demo.model.entity.Maintenance;
+
+public interface IMaintenanceService extends IAbstractService<Maintenance> {
 }

@@ -1,4 +1,6 @@
 package com.example.demo.services;
 
-public interface IRoomService {
+import com.example.demo.model.entity.Room;
+
+public interface IRoomService extends IAbstractService<Room> {
 }

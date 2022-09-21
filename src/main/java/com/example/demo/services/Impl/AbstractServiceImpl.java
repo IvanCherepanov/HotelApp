@@ -1,6 +1,6 @@
 package com.example.demo.services.Impl;
 
-import com.example.demo.model.DAO.IAbstractRepository;
+import com.example.demo.model.dao.IAbstractRepository;
 import com.example.demo.services.IAbstractService;
 import org.springframework.data.domain.Sort;
 
