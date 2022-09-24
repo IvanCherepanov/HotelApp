@@ -23,9 +23,9 @@ public class Room{
     @Column(name = "description_room")
     private String description;
 
-    @Column(name = "current_capacity_room")
-    private int current_capacity;
-
     @Column(name = "room_capacity")
     private int capacity;
+
+    @Column(name = "photo_URL")
+    private String photoURL;
 }

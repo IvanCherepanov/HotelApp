@@ -5,4 +5,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface IClientRepository extends IAbstractRepository<Client>{
+    Client findClientByName(String login);
+    Client findClientByFullName(String fullName);
+    Client findClientsByNameAndPhoneAndEmail(String name, String phone, String email);
 }
