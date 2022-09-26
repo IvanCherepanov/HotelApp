@@ -39,5 +39,6 @@ public class ContractMaintenance {
     @Column(name="time_contract")
     private LocalDateTime timeContract;
 
-    private String inputTimeString;
+    @Transient
+    private String inputDate;
 }

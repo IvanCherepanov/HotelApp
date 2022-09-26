@@ -1,9 +1,11 @@
 package com.example.demo.controllers;
 
 
+import com.example.demo.model.dto.RequestRoom;
 import com.example.demo.model.entity.Client;
 import com.example.demo.model.entity.ContractMaintenance;
 import com.example.demo.model.entity.Maintenance;
+import com.example.demo.services.ICardService;
 import com.example.demo.services.IClientService;
 import com.example.demo.services.IContractMaintenanceService;
 import com.example.demo.services.IMaintenanceService;
@@ -14,9 +16,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 
 @Controller
 @RequestMapping(value = "/client")
@@ -24,14 +29,19 @@ public class ClientController extends AbstractController<Client, IClientService>
     private IClientService iUserService;
     private IMaintenanceService iMaintenanceService;
     private IContractMaintenanceService iContractMaintenanceService;
+    private ICardService iCardService;
     private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
-    protected ClientController(IClientService service,IMaintenanceService iMaintenanceService, IContractMaintenanceService iContractMaintenanceService) {
+    protected ClientController(IClientService service,
+                               IMaintenanceService iMaintenanceService,
+                               IContractMaintenanceService iContractMaintenanceService,
+                               ICardService iCardService) {
         super(service);
         this.iUserService = service;//important
         this.iMaintenanceService = iMaintenanceService;
         this.iContractMaintenanceService =iContractMaintenanceService;
+        this.iCardService = iCardService;
 
     }
 
@@ -125,29 +135,64 @@ public class ClientController extends AbstractController<Client, IClientService>
         ContractMaintenance contractMaintenance = new ContractMaintenance();
         model.addAttribute("maintenances", iMaintenanceService.getAll());
         model.addAttribute("contract", contractMaintenance);
-        return "newMaintenance.html";
+        return "newmaintenance.html";
 
     }
 
     @PostMapping("/createClientDoc")
     public String saveItem(Authentication authentication,
                            @ModelAttribute("contract") ContractMaintenance contractMaintenance ) {
-        //System.out.println(122);
-
         Long userId = ((Client) (((ClientServiceImpl) iUserService).loadUserByUsername(authentication.getName()))).getId();
-        //System.out.println(userId);
-        String dateString = (contractMaintenance.getInputTimeString());
+        String dateString = contractMaintenance.getInputDate();
         dateString = dateString.replace("T", " ");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         LocalDateTime dateTime = LocalDateTime.parse(dateString, formatter);
-        //System.out.println(dateTime.toString());
-        //iContractMaintenanceService.create(contractMaintenance);
-        //System.out.println(233);
         iContractMaintenanceService.create(
                 userId,
                 contractMaintenance.getMaintenanceId(),
                 dateTime);
+        return "redirect:/client/home";
+    }
 
+    @GetMapping("/newRoomContract")
+    public String addRoomContract(Model model) {
+        RequestRoom requestRoom = new RequestRoom();
+        model.addAttribute("dateAndCapacity", requestRoom);
+        return "findRoom.html";
+    }
+
+    @GetMapping("/rooms")
+    public String roomsAvailable(Authentication authentication,
+                                 @ModelAttribute("dateAndCapacity") RequestRoom requestRoom ,
+                                 final RedirectAttributes redirectAttributes,
+                                 Model model) {
+        String twoDate = (requestRoom.getRangeDate());
+        twoDate=twoDate.replace(" ","");
+        String[] parts = twoDate.split("-");
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        String date = parts[0];
+        LocalDate inputDate = LocalDate.parse(date, formatter);
+        System.out.println(inputDate);
+
+        String date1 = parts[1];
+        LocalDate outputDate = LocalDate.parse(date1, formatter);
+        System.out.println(outputDate);
+
+        System.out.println(requestRoom.getCapacity());
+        model.addAttribute("rooms", iCardService.getListByParam(
+                inputDate,
+                outputDate,
+                requestRoom.getCapacity()
+        ) );
+        redirectAttributes.addFlashAttribute("dateAndCapacity", requestRoom);
+        return "rooms.html";
+    }
+
+    @PostMapping("/createClientRoom")
+    public String saveRoom(Authentication authentication,
+                           @ModelAttribute("dateAndCapacity") RequestRoom requestRoom ) {
+        Long userId = ((Client) (((ClientServiceImpl) iUserService).loadUserByUsername(authentication.getName()))).getId();
         return "redirect:/client/home";
     }
 }
