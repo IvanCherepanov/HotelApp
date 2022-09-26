@@ -36,9 +36,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors()
                 .disable()
                 .authorizeRequests()
-                .antMatchers("/user/home","/user/products").permitAll()//стартовая страница
-                .antMatchers("/shopping_basket/*","/logout","/room/name").hasAnyAuthority("ADMIN", "USER")
-                .antMatchers("/card/*","/client/*", "/food/*","/cleaning/*","/maintenance/*","/contractMaintenance/*","/room/*").hasAnyAuthority("ADMIN")
+                .antMatchers("/client/home").permitAll()//стартовая страница
+                .antMatchers("/logout","/room/name","/client/"
+                        ,"/client/newClientDoc"
+                        ,"/client/createClientDoc"
+                        ,"/client/newRoomContract"
+                        ,"/client/rooms"
+                        ,"/client/createClientRoom"
+                        ,"/client/myRoomList"
+                        ,"/client/delRoom/{id}"
+                        ,"/client/editRoom/{id}"
+                        ,"/client/updateRoom/{id}",
+                        "/contractMaintenance/myList").hasAnyAuthority("ADMIN", "USER")
+                .antMatchers("/card/*","/client/*",
+                        "/food/*","/cleaning/*","/maintenance/*",
+                        "/contractMaintenance/*","/room/*")
+                    .hasAnyAuthority("ADMIN")
                 .antMatchers( "/sign").permitAll()
                 .anyRequest().authenticated()
                 .and()

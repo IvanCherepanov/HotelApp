@@ -127,7 +127,7 @@ public class ClientController extends AbstractController<Client, IClientService>
     @GetMapping("/home")
     public String getHome(Authentication authentication,
                           Model model) {
-        //model.addAttribute("userTypeRole", iUserService.getUserRole(authentication));
+        model.addAttribute("userTypeRole", iUserService.getUserRole(authentication));
         return "index.html";
     }
 
@@ -152,7 +152,7 @@ public class ClientController extends AbstractController<Client, IClientService>
                 userId,
                 contractMaintenance.getMaintenanceId(),
                 dateTime);
-        return "redirect:/client/home";
+        return "redirect:/contractMaintenance/myList";
     }
 
     @GetMapping("/newRoomContract")
@@ -207,7 +207,7 @@ public class ClientController extends AbstractController<Client, IClientService>
         LocalDate inputDate = LocalDate.parse(input, formatter);
         LocalDate outputDate = LocalDate.parse(output, formatter);
         iCardService.create(inputDate,outputDate,userId,id);
-        return "redirect:/client/home";
+        return "redirect:/client/myRoomList";
     }
 
     @GetMapping("/myRoomList")
