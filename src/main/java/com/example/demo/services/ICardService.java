@@ -14,4 +14,9 @@ public interface ICardService extends IAbstractService<Card>{
                 LocalDate OutputDate,
                 Long idClient,
                 Long idRoom);
+    List<Card> getListByClientId(Long id);
+
+    List<Object[]> getListRoomCostById(Long id);
+
+    Object[] getObjectById(Long id, List<Object[]> fullList);
 }

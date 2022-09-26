@@ -2,6 +2,7 @@ package com.example.demo.services.Impl;
 
 import com.example.demo.model.dao.IAbstractRepository;
 import com.example.demo.services.IAbstractService;
+import org.springframework.aop.scope.ScopedProxyUtils;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
@@ -47,6 +48,7 @@ public abstract class AbstractServiceImpl <T, D extends IAbstractRepository<T>> 
     @Override
     public List<T> getAll() {
         Sort sort = Sort.by("id").ascending();//не очень красиво и правильно, но
+        System.out.println("here getAll failes");
         return defaultDao.findAll(sort);
     }
 

@@ -46,4 +46,30 @@ public class CardServiceImpl extends AbstractServiceImpl<Card, ICardRepository> 
         card.setCleaningId(iCleaningRepository.findCleaningByDescription("Утрення уборка").getId());
         iCardRepository.save(card);
     }
+
+    @Override
+    public List<Card> getListByClientId(Long id) {
+        return iCardRepository.findAllByClientId(id);
+    }
+
+    @Override
+    public List<Object[]> getListRoomCostById(Long id) {
+        return iCardRepository.getRoomCostById(id);
+    }
+
+    @Override
+    public Object[] getObjectById(Long id,  List<Object[]> fullList ) {
+        Object[] answer = null;
+
+        for (Object[] temp: fullList
+             ) {
+            System.out.println(Long.valueOf(temp[10].toString()) == id);
+            System.out.println("_________________");
+            if (Long.valueOf(temp[10].toString()) == id){
+                answer = temp;
+                return temp;
+            }
+        }
+        return answer;
+    }
 }

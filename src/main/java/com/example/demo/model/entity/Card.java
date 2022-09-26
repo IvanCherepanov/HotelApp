@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class Card {
     @Id
-    @Column(name="idCard")
+    @Column(name="id_сard")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

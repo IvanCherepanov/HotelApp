@@ -2,14 +2,8 @@ package com.example.demo.controllers;
 
 
 import com.example.demo.model.dto.RequestRoom;
-import com.example.demo.model.entity.Client;
-import com.example.demo.model.entity.ContractMaintenance;
-import com.example.demo.model.entity.Maintenance;
-import com.example.demo.model.entity.Room;
-import com.example.demo.services.ICardService;
-import com.example.demo.services.IClientService;
-import com.example.demo.services.IContractMaintenanceService;
-import com.example.demo.services.IMaintenanceService;
+import com.example.demo.model.entity.*;
+import com.example.demo.services.*;
 import com.example.demo.services.Impl.ClientServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -23,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/client")
@@ -31,19 +26,24 @@ public class ClientController extends AbstractController<Client, IClientService>
     private IMaintenanceService iMaintenanceService;
     private IContractMaintenanceService iContractMaintenanceService;
     private ICardService iCardService;
+    private IFoodService iFoodService;
+    private ICleaningService iCleaningService;
     private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
     protected ClientController(IClientService service,
                                IMaintenanceService iMaintenanceService,
                                IContractMaintenanceService iContractMaintenanceService,
+                               IFoodService iFoodService,
+                               ICleaningService iCleaningService,
                                ICardService iCardService) {
         super(service);
         this.iUserService = service;//important
         this.iMaintenanceService = iMaintenanceService;
         this.iContractMaintenanceService =iContractMaintenanceService;
         this.iCardService = iCardService;
-
+        this.iFoodService = iFoodService;
+        this.iCleaningService = iCleaningService;
     }
 
     @GetMapping("/list")
@@ -208,5 +208,60 @@ public class ClientController extends AbstractController<Client, IClientService>
         LocalDate outputDate = LocalDate.parse(output, formatter);
         iCardService.create(inputDate,outputDate,userId,id);
         return "redirect:/client/home";
+    }
+
+    @GetMapping("/myRoomList")
+    public String readingAllByClient(Authentication authentication,
+                                     Model model) {
+        Long userId = ((Client) (((ClientServiceImpl) iUserService).loadUserByUsername(authentication.getName()))).getId();
+        model.addAttribute("cards", iCardService.getListRoomCostById(userId));
+        //List<Object[]> temp = iContractMaintenanceService.getListById(userId);
+        System.out.println(123);
+        return "cardsUser.html";
+    }
+
+    @GetMapping("delRoom/{id}")
+    public String deleteClientRoom(@PathVariable Long id) {
+        iCardService.delete(id);
+        return "redirect:/client/myRoomList";
+    }
+
+    @GetMapping("/editRoom/{id}")
+    public String editClientRoom(Authentication authentication,@PathVariable Long id, Model model) {
+        Long userId = ((Client) (((ClientServiceImpl) iUserService).loadUserByUsername(authentication.getName()))).getId();
+        Object[] temp = iCardService.getObjectById(id,iCardService.getListRoomCostById(userId));
+        Card card = new Card();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate inputDate = LocalDate.parse(temp[1].toString(), formatter);
+        LocalDate outputDate = LocalDate.parse(temp[2].toString(), formatter);
+        card.setInputDate(inputDate);
+        card.setOutputDate(outputDate);
+
+        card.setRoomId(Long.valueOf(temp[3].toString()));
+        card.setFoodId(Long.valueOf(temp[5].toString()));
+        card.setCleaningId(Long.valueOf(temp[8].toString()));
+
+        card.setId(Long.valueOf(temp[10].toString()));
+
+        model.addAttribute("card", card);
+        model.addAttribute("foods", iFoodService.getAll());
+        model.addAttribute("cleanings",iCleaningService.getAll());
+        return "editRoom.html";
+    }
+
+    @PostMapping("/updateRoom/{id}")
+    public String updateClientRoom(@PathVariable Long id,
+                             @ModelAttribute("card") Card card,
+                             Model model) {
+
+        // get pet from database by id
+        Card existingCard = iCardService.findById(id);
+        existingCard.setFoodId(card.getFoodId());
+        existingCard.setCleaningId(card.getCleaningId());
+        System.out.println(5435);
+        // save updated pet object
+        iCardService.update(id, existingCard);
+        return "redirect:/client/myRoomList";
     }
 }

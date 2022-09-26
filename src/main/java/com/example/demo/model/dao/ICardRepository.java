@@ -14,4 +14,8 @@ public interface ICardRepository extends IAbstractRepository<Card>{
     List<Object[]> getListByCapacityAndRange(LocalDate inputDate,
                                          LocalDate outputDate,
                                          int capacity);
+    List<Card> findAllByClientId(Long id);
+
+    @Procedure
+    List<Object[]> getRoomCostById(Long id);
  }
