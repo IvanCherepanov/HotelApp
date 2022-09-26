@@ -28,10 +28,10 @@ public class Card {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="Client_id_client", insertable = false, updatable = false)
     @JsonIgnore
-    private Maintenance maintenance;
+    private Client client;
 
     @Column(name="Client_id_client")
-    private Long maintenanceId;
+    private Long clientId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="room_id_room", insertable = false, updatable = false)

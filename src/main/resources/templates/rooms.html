@@ -73,7 +73,8 @@
                     <p class="card-text" th:text="${room[1]}"></p>
 
                     <div class="row-cols-4">
-                        <form th:method="POST" th:action="@{/client/createClientRoom}">
+                        <form th:method="POST" th:action="@{/client/createClientRoom(inputThing=${input}, outputThing=${output})}">
+                            <input type="hidden" th:name="id" th:value="${room[0]}">
                             <button type="submit" class="btn btn-primary m-2 ">Купить</button>
                         </form>
                     </div>

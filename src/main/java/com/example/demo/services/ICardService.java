@@ -10,4 +10,8 @@ public interface ICardService extends IAbstractService<Card>{
     List<Object[]> getListByParam(LocalDate inputDate,
                                          LocalDate outputDate,
                                          int capacity);
+    void create(LocalDate InputDate,
+                LocalDate OutputDate,
+                Long idClient,
+                Long idRoom);
 }

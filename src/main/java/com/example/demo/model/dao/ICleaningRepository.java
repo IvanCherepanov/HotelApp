@@ -5,4 +5,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ICleaningRepository extends IAbstractRepository<Cleaning> {
+    Cleaning findCleaningByDescription(String desc);
 }

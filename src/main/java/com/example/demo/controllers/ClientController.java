@@ -5,6 +5,7 @@ import com.example.demo.model.dto.RequestRoom;
 import com.example.demo.model.entity.Client;
 import com.example.demo.model.entity.ContractMaintenance;
 import com.example.demo.model.entity.Maintenance;
+import com.example.demo.model.entity.Room;
 import com.example.demo.services.ICardService;
 import com.example.demo.services.IClientService;
 import com.example.demo.services.IContractMaintenanceService;
@@ -164,7 +165,6 @@ public class ClientController extends AbstractController<Client, IClientService>
     @GetMapping("/rooms")
     public String roomsAvailable(Authentication authentication,
                                  @ModelAttribute("dateAndCapacity") RequestRoom requestRoom ,
-                                 final RedirectAttributes redirectAttributes,
                                  Model model) {
         String twoDate = (requestRoom.getRangeDate());
         twoDate=twoDate.replace(" ","");
@@ -185,14 +185,28 @@ public class ClientController extends AbstractController<Client, IClientService>
                 outputDate,
                 requestRoom.getCapacity()
         ) );
-        redirectAttributes.addFlashAttribute("dateAndCapacity", requestRoom);
-        return "rooms.html";
+        model.addAttribute("input", inputDate.toString());
+        model.addAttribute("output", outputDate);
+        model.addAttribute("capacity", requestRoom.getCapacity());
+        return "/rooms.html";
     }
 
     @PostMapping("/createClientRoom")
     public String saveRoom(Authentication authentication,
-                           @ModelAttribute("dateAndCapacity") RequestRoom requestRoom ) {
+                           @RequestParam(name = "inputThing", required = false) String input,
+                           @RequestParam(name = "outputThing", required = false) String output,
+                           @RequestParam Long id) {
         Long userId = ((Client) (((ClientServiceImpl) iUserService).loadUserByUsername(authentication.getName()))).getId();
+        System.out.println(userId);
+        System.out.println(input);
+        System.out.println(output);
+//        System.out.println(requestRoom.getCapacity());
+//        System.out.println(requestRoom.getRangeDate());
+        System.out.println(id);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate inputDate = LocalDate.parse(input, formatter);
+        LocalDate outputDate = LocalDate.parse(output, formatter);
+        iCardService.create(inputDate,outputDate,userId,id);
         return "redirect:/client/home";
     }
 }
