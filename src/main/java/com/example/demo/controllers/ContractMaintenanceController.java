@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -52,5 +53,11 @@ public class ContractMaintenanceController extends AbstractController<ContractMa
         model.addAttribute("totalPrice", iContractMaintenanceService.getTotalCostMaintenance(temp));
         System.out.println(123);
         return "contractMaintenance.html";
+    }
+
+    @GetMapping("del/{id}")
+    public String deleteCleaning(@PathVariable Long id) {
+        iContractMaintenanceService.delete(id);
+        return "redirect:/contractMaintenance/list";
     }
 }

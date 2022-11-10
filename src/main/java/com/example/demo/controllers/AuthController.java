@@ -86,7 +86,7 @@ public class AuthController extends AbstractController<Client, IClientService>{
                     create(email, login, name, address, numberPhone,password, RoleType.USER.name());
             System.out.println("sign-else");
             authWithHttpServletRequest(request, login, password);
-            return "redirect:/user/home";
+            return "redirect:/client/home";
         }
     }
 }

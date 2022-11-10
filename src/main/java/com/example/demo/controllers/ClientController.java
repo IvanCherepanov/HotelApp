@@ -94,8 +94,9 @@ public class ClientController extends AbstractController<Client, IClientService>
                              Model model) {
 
         // get pet from database by id
-        Client existingUser = ((Client) (((ClientServiceImpl) iUserService).loadUserByUsername(client.getName())));
+        Client existingUser = ((Client) (((ClientServiceImpl) iUserService).findById(id)));
         existingUser.setId(id);
+
         existingUser.setName(client.getName());
         existingUser.setFullName(client.getFullName());
         existingUser.setAddress(client.getAddress());
